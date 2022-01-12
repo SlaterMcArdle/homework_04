@@ -10,9 +10,6 @@ header > a {
 header > a:hover {
     font-weight: bold;
 }
-p {
-    
-}
 #timeRemaining {
     float: right;
 }
@@ -24,11 +21,19 @@ button {
     background-color: purple;
     color: white;
     border-radius: 3px;
+    width: 100px;
 }
 .quizButton {
     display: block;
+    width: 300px;
 }
 .errorMessage {
     color: red;
     font-weight: bold;
+}
+.leaderItems {
+    background-color: rgb(236, 234, 234);
+    width: 200px;
+    border-radius: 2px;
+    margin: 1px;
 }

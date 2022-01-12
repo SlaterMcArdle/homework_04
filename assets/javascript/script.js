@@ -1,34 +1,44 @@
 // Create an array of objects containing the questions, possible answers, and correct answer.
 var questionArray = [
     {
-        question: "question1",
+        question: "Items in a(n) ___ list are preceded by numbers.",
         options: {
-            1: "a",
-            2: "b",
-            3: "c",
-            4: "d"
+            1: "unordered",
+            2: "ordered",
+            3: "bulleted",
+            4: "grocery"
         },
-        correct: 4
+        correct: 2
     },
     {
-        question: "question2",
+        question: "Where is the correct place to put the title tag in an HTML document?",
         options: {
-            1: "a",
-            2: "b",
-            3: "c",
-            4: "d"
+            1: "Above the HTML tag",
+            2: "In the body of the document",
+            3: "In the head of the document",
+            4: "It doesn't matter"
         },
-        correct: 4
+        correct: 3
     },
     {
-        question: "question3",
+        question: "The # symbol specifies that the css selector is?",
         options: {
-            1: "a",
-            2: "b",
-            3: "c",
-            4: "d"
+            1: "id",
+            2: "tag",
+            3: "class",
+            4: "first"
         },
-        correct: 4
+        correct: 1
+    },
+    {
+        question: "How do you create a function in Javascript?",
+        options: {
+            1: "function myFunction()",
+            2: "function = myFunction()",
+            3: "function:myFunction()",
+            4: "function > myFunction()"
+        },
+        correct: 1
     }
 ]
 // #region VARIABLES
@@ -40,16 +50,19 @@ var timeSpan = document.getElementById('timeRemaining');
 var correct
 // Create some tracking variables for the quiz
 var correctAnswers = 0;
-var incorrectAnswers = 0;
 // Create a timing tracker for the quiz
-var timeRemaining = questionArray.length*5;
+var timeRemaining = questionArray.length * 10;
+// Create a global interval timer variable
 var timerID;
-// #endregion
-
 // Generate an array keeping track of the index numbers of unasked questions
 var unaskedQuestionIndexes = [];
-for (var i = 0; i < questionArray.length; i++) {
-    unaskedQuestionIndexes.push(i);
+// #endregion
+
+// Function to generate a list of available question indexes for random selection during the quiz 
+function populateQuestionIndexes() { 
+    for (var i = 0; i < questionArray.length; i++) {
+        unaskedQuestionIndexes.push(i);
+    }
 }
 function createElement({element = '', id = '', content, value, type, cssClass}) {
     var newElement = document.createElement(element);
@@ -104,11 +117,12 @@ function checkCorrectAnswer(answer) {
     if (answer == correct) {
         correctAnswers++;
     } else {
-        incorrectAnswers++;
         if (timeRemaining >=5) {
             timeRemaining -= 5;
         } else {
             clearInterval(timerID);
+            // reset time remaining variable
+            timeRemaining = questionArray.length * 5;
             generateResults();
         }
     }
@@ -122,6 +136,8 @@ function generateResults() {
     var enterInitials = createElement({element: 'input', id: 'enterInitials', type: 'input'});
     var submitButton = createElement({element: 'button', id: 'submitButton', content: 'Submit', value: finalScore});
     quizSection.replaceChildren(doneMessage, scoreMessage, initialsMessage, enterInitials, submitButton);
+    // Reset the correct answer counter
+    correctAnswers = 0;
 }
 // Function to run object value comparisons for the leaderboard
 function compareScores(a, b) {
@@ -137,26 +153,45 @@ function compareScores(a, b) {
 }
 // Functon to generate the leader board
 function generateLeaderBoard(score, initials) {
-    console.log(initials);
     // empty the quiz section
     quizSection.replaceChildren();
-    localStorage.setItem('leaderboard', '[{"SX": "100"},{"YR": "60"},{"TV": "180"}]');
-    // set the new leaderboard item
+    // If there's any stored leaderboard items in local storage, pull and parse it. 
     if (localStorage.getItem('leaderboard')) {
-        
         var leaderBoardList = JSON.parse(localStorage.getItem('leaderboard'));
-        leaderBoardList.push({initials: score});
+        // Add the new result to the list
+        if (score && initials) {
+        leaderBoardList.push({[initials]: score});
+        }
         // sort the leaderboard list
         leaderBoardList.sort(compareScores);
+    } else if (score && initials) {
+        // Create the leaderboard list
+        var leaderBoardList = [{[initials]: score}];
     }
-    var elementList = [];
-    for (var i = 0; i < leaderBoardList.length; i++) {
-        var leaderScore = createElement({element: 'p', content: Object.keys(leaderBoardList[i]) + ':   ' + leaderBoardList[i][Object.keys(leaderBoardList[i])]});
-        elementList.push(leaderScore);
+    // Generate the leaderboard header
+    quizSection.appendChild(createElement({element: 'h2', id: 'leaderBoardHeader', content: 'Leader Board'}));
+    // Iterate through the leaderboard list, creating elements, populating and pushing them.
+    if (leaderBoardList) {
+        for (var i = 0; i < leaderBoardList.length; i++) {
+            var leaderScore = createElement({element: 'p', content: Object.keys(leaderBoardList[i]) + ':   ' + leaderBoardList[i][Object.keys(leaderBoardList[i])], cssClass: 'leaderItems'});
+            quizSection.appendChild(leaderScore);
+        }
+        // Push the updated leaderboard list into localStorage
+        localStorage.setItem('leaderboard',JSON.stringify(leaderBoardList));
+        // Populate the reset scores button
+        quizSection.appendChild(createElement({element: 'button', id: 'clearScores', content: 'Clear Scores'}));
     }
-    for (var i = 0; i < elementList.length; i++) {
-        quizSection.appendChild(elementList[i]);
-    }
+    // Populate the go back button
+    quizSection.appendChild(createElement({element: 'button', id: 'goBackButton', content: 'Go Back'})); 
+}
+// Function to clear the leaderboard
+function clearLeaderBoard() {
+    // Clear the stored leader board
+    localStorage.removeItem('leaderboard');
+    // Generate the leaderboard header
+    quizSection.appendChild(createElement({element: 'h2', id: 'leaderBoardHeader', content: 'Leader Board'}));
+    // Populate the go back button
+    quizSection.replaceChildren(createElement({element: 'button', id: 'goBackButton', content: 'Go Back'}))
 }
 // Function to perform actions inside the quiz countdown timer
 function quizTimer() {
@@ -179,11 +214,15 @@ document.addEventListener('click', function(e) {
             populateQuizQuestion();
         } else {
             clearInterval(timerID);
+            // reset the time remaining variable
+            timeRemaining = questionArray.length * 10;
+            timeSpan.textContent = 'Time: '+timeRemaining+'s';
             generateResults();
         }
     } 
     // check for start quiz button click
     else if (e.target.id=='quizButton') {
+        populateQuestionIndexes();
         generateQuizElements();
         populateQuizQuestion();
         timerID = setInterval(quizTimer, 1000);
@@ -205,5 +244,17 @@ document.addEventListener('click', function(e) {
         } else {
             document.getElementById('errorMessage') = 'Please input your initials.';
         }
+    } 
+    // Check for go back button click
+    else if (e.target.id == 'goBackButton') {
+        generateWelcomeScreen();
+    }
+    // Check for clear scores button click
+    else if (e.target.id == 'clearScores') {
+        clearLeaderBoard();
+    }
+    // Check if view high scores has been clicked
+    else if (e.target.id == 'viewHighScores') {
+        generateLeaderBoard();
     }
 })
