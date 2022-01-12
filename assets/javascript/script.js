@@ -188,10 +188,12 @@ function generateLeaderBoard(score, initials) {
 function clearLeaderBoard() {
     // Clear the stored leader board
     localStorage.removeItem('leaderboard');
+    // Clear the section
+    quizSection.replaceChildren();
     // Generate the leaderboard header
     quizSection.appendChild(createElement({element: 'h2', id: 'leaderBoardHeader', content: 'Leader Board'}));
     // Populate the go back button
-    quizSection.replaceChildren(createElement({element: 'button', id: 'goBackButton', content: 'Go Back'}))
+    quizSection.appendChild(createElement({element: 'button', id: 'goBackButton', content: 'Go Back'}))
 }
 // Function to perform actions inside the quiz countdown timer
 function quizTimer() {
