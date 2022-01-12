@@ -2,7 +2,7 @@
 UCSD Web Developer Bootcamp Section 4 Mini Project
 The goal of this project was to use dynamic Javascript and browser APIs to create a coding quiz. It would include tracked results and bt timed.
 
-The finished product is available here: https://windwalker-92.github.io/3rd-Party-APIs-Mini-Project/
+The finished product is available here: https://windwalker-92.github.io/homework_04/
 
 To accomplish the dynamic loading, I had an empty section in the HTML. A series of functions in the Javascript would create, populate and reset elements in the section. 
 
