@@ -1,0 +1,34 @@
+header {
+    background-color: rgba(255, 139, 255, 0.3);
+    padding: 0.5em 1.5em;
+    font-size: 1.3em;
+}
+header > a {
+    color: purple;
+    text-decoration-line: none;
+}
+header > a:hover {
+    font-weight: bold;
+}
+p {
+    
+}
+#timeRemaining {
+    float: right;
+}
+#quiz {
+    width: 70%;
+    margin: 0 auto;
+}
+button {
+    background-color: purple;
+    color: white;
+    border-radius: 3px;
+}
+.quizButton {
+    display: block;
+}
+.errorMessage {
+    color: red;
+    font-weight: bold;
+}
